@@ -1,0 +1,113 @@
+:root {
+    --bg-dark: #121212; --bg-desk: #2c3e50; --papel: #fdfbf7;
+    --text-dark: #2c3e50; --vermelho: #c0392b; --laranja: #d35400;
+    --amarelo: #f39c12; --verde: #27ae60; --azul: #2980b9;
+    --font-scale: 1; 
+}
+
+* { box-sizing: border-box; font-family: 'Courier New', Courier, monospace; user-select: none; margin: 0; padding: 0; }
+
+html, body { 
+    background: var(--bg-dark); color: var(--text-dark); 
+    width: 100vw; height: 100%; overflow: hidden; 
+    touch-action: none; display: flex; justify-content: center; align-items: center; 
+    font-size: calc(16px * var(--font-scale)); 
+}
+
+.game-wrapper { width: 100%; height: 100dvh; max-width: 1200px; display: flex; flex-direction: column; background: var(--bg-desk); position: relative; }
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; z-index: 10; background: #1a252f; width: 100%; height: 100%; }
+.hidden { display: none !important; }
+.desk-texture { background-image: radial-gradient(#34495e 10%, transparent 10%), radial-gradient(#34495e 10%, transparent 10%); background-size: 10px 10px; background-position: 0 0, 5px 5px; background-color: #2c3e50; }
+
+/* === TELAS DE MENU E MODAIS === */
+#tela-menu { justify-content: center; align-items: center; text-align: center; padding: 10px; }
+.logo-title { font-size: 2.5rem; color: #ecf0f1; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; text-shadow: 0 3px 10px rgba(0,0,0,0.5); }
+.logo-subtitle { font-size: 0.9rem; color: #bdc3c7; margin-bottom: 30px; }
+.menu-botoes { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+.btn-menu { background: #34495e; color: white; border: 2px solid #2c3e50; padding: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 2px 2px 0px rgba(0,0,0,0.5); text-transform: uppercase; }
+.btn-menu:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px rgba(0,0,0,0.5); }
+.modal-box { background: var(--papel); padding: 20px; border: 1px solid #bdc3c7; width: 90%; max-width: 400px; text-align: left; }
+.input-group { margin: 15px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; }
+.input-group input[type="password"] { padding: 8px; border: 1px solid #7f8c8d; background: #ecf0f1; }
+.input-group input[type="range"] { width: 100%; }
+
+/* === HUD === */
+.hud { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; height: 45px; background: #2c3e50; color: white; z-index: 5; border-bottom: 2px solid #1a252f; }
+.hud-stats { display: flex; gap: 8px; align-items: center; }
+.badge { padding: 4px 8px; font-weight: bold; background: #34495e; border: 1px solid #7f8c8d; font-size: 0.75rem; }
+.btn-hud { background: #c0392b; color: white; border: 1px solid #e74c3c; padding: 4px 8px; cursor: pointer; font-weight: bold; font-family: monospace; font-size: 0.75rem; border-radius: 4px; box-shadow: 1px 1px 0 rgba(0,0,0,0.3); }
+
+/* === TELA DE JOGO MOBILE (CORREÇÃO DE ESPAÇO) === */
+#tela-jogo { display: flex; flex-direction: column; height: 100%; }
+.panel-left { display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 8px 8px 4px 8px; border-bottom: 2px solid #1a252f; }
+/* Alterado para flex: none; ajustando automaticamente à altura dos botões */
+.panel-right { display: flex; flex-direction: column; flex: none; min-height: 0; padding: 4px 8px 8px 8px; justify-content: flex-start; }
+
+.prancheta { background: var(--papel); flex: 1; margin-bottom: 5px; border-radius: 4px; box-shadow: 2px 2px 8px rgba(0,0,0,0.6); position: relative; padding: 12px 10px 5px 10px; border: 1px solid #dcdde1; display: flex; flex-direction: column; min-height: 0; }
+.clip { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 50px; height: 15px; background: #7f8c8d; border-radius: 3px; border: 1px solid #34495e; }
+.prontuario-header { display: flex; gap: 10px; border-bottom: 1px dashed #bdc3c7; padding-bottom: 5px; margin-bottom: 5px; align-items: center; flex-shrink: 0; }
+.foto-paciente { width: 45px; height: 45px; object-fit: cover; border: 1px solid #2c3e50; filter: grayscale(30%); }
+.dados-basicos h3 { font-size: 0.85rem; text-decoration: underline; margin-bottom: 2px; }
+.dados-basicos p { font-size: 0.75rem; margin-bottom: 0; }
+.prontuario-body { flex: 1; overflow-y: auto; min-height: 0; padding-right: 5px; } 
+.prontuario-body p { font-size: 0.75rem; }
+.balao-fala { background: #ecf0f1; padding: 10px; border-left: 3px solid #34495e; font-style: italic; font-weight: bold; margin-top: 5px; font-size: 0.8rem; }
+
+.monitor-container { background: #000; height: 45px; position: relative; border: 2px solid #1a252f; border-radius: 4px; flex-shrink: 0; margin-top: 5px; }
+canvas { width: 100%; height: 100%; display: block; }
+.monitor-overlay { position: absolute; top: 3px; right: 5px; color: var(--verde); font-weight: bold; font-size: 0.8rem; }
+
+.acoes-titulo { background: #ecf0f1; display: inline-block; padding: 2px 6px; font-weight: bold; border: 1px solid #bdc3c7; margin-bottom: 4px; box-shadow: 1px 1px 0 rgba(0,0,0,0.2); font-size: 0.75rem; align-self: flex-start; }
+.papel-acoes { background: var(--papel); padding: 8px; border: 1px solid #bdc3c7; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); margin-bottom: 8px; }
+.grid-afericao, .grid-decisao { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.btn-aferir { background: transparent; border: 1px solid #34495e; padding: 8px 5px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; color: #2c3e50; font-size: 0.75rem; }
+.btn-aferir.revelado { border-color: var(--azul); color: var(--azul); background: rgba(41, 128, 185, 0.1); }
+
+.btn-carimbo { border: 2px solid; padding: 12px 2px; font-size: 0.8rem; font-weight: bold; background: transparent; cursor: pointer; border-radius: 3px; opacity: 0.9; transform: rotate(-1deg); }
+.btn-carimbo:active { transform: scale(0.95) rotate(2deg); background: currentColor; color: var(--papel); }
+.carimbo-vermelho { color: var(--vermelho); border-color: var(--vermelho); }
+.carimbo-laranja { color: var(--laranja); border-color: var(--laranja); }
+.carimbo-amarelo { color: var(--amarelo); border-color: var(--amarelo); }
+.carimbo-verde { color: var(--verde); border-color: var(--verde); }
+
+/* Overlays */
+.overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; padding: 10px; }
+.papel-feedback { background: var(--papel); padding: 20px; text-align: center; border: 2px solid #34495e; box-shadow: 5px 5px 0px rgba(0,0,0,0.5); width: 100%; max-width: 400px; margin-bottom: 20px; }
+.shake { animation: shake 0.3s both; }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-1deg); } 75% { transform: translateX(5px) rotate(1deg); } }
+
+/* === LAYOUT DESKTOP === */
+@media (min-width: 768px) {
+    .game-wrapper { height: 90vh; border: 5px solid #1a252f; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+    #tela-jogo:not(.hidden) { display: grid !important; grid-template-columns: 55% 45%; grid-template-rows: 60px calc(100% - 60px); }
+    
+    .hud { height: 60px; padding: 0 20px; }
+    .badge { padding: 5px 10px; font-size: 0.9rem; }
+    .btn-hud { padding: 6px 12px; font-size: 0.9rem; }
+
+    .panel-left { grid-column: 1; grid-row: 2; border-right: 5px solid #1a252f; border-bottom: none; padding: 20px; }
+    .panel-right { grid-column: 2; grid-row: 2; padding: 20px; justify-content: center; }
+
+    .prancheta { padding: 30px 20px; margin-bottom: 20px; justify-content: flex-start; }
+    .clip { width: 100px; height: 30px; top: -10px; border-width: 2px; }
+    .prontuario-header { padding-bottom: 15px; margin-bottom: 15px; gap: 20px; }
+    .foto-paciente { width: 90px; height: 90px; border-width: 2px; }
+    .dados-basicos h3 { font-size: 1.4rem; margin-bottom: 10px; }
+    .dados-basicos p { font-size: 1rem; }
+    .prontuario-body p { font-size: 1rem; }
+    .balao-fala { padding: 15px; font-size: 1rem; margin-top: 10px; }
+    
+    .monitor-container { height: 120px; border-width: 5px; margin-top: 0; }
+    .monitor-overlay { top: 10px; right: 10px; font-size: 1.2rem; }
+
+    .acoes-titulo { font-size: 1rem; padding: 5px 10px; margin-bottom: 10px; }
+    .papel-acoes { padding: 15px; margin-bottom: 20px; }
+    .btn-aferir { padding: 15px; font-size: 1rem; border-width: 2px; }
+    .btn-carimbo { padding: 20px; font-size: 1.1rem; border-width: 4px; }
+    .btn-carimbo:hover { opacity: 1; transform: scale(1.05) rotate(0deg); }
+
+    .papel-feedback { padding: 40px; }
+    .logo-title { font-size: 4rem; }
+    .btn-menu { padding: 15px; font-size: 1.2rem; }
+}

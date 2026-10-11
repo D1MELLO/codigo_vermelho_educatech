@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código Vermelho: Papers, Please Edition</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="game-wrapper" id="game-app">
+
+        <!-- TELA DE MENU INICIAL -->
+        <div id="tela-menu" class="screen">
+            <h1 class="logo-title">CÓDIGO VERMELHO</h1>
+            <h2 class="logo-subtitle">Departamento de Triagem</h2>
+
+            <div class="menu-botoes">
+                <button class="btn-menu" id="btn-iniciar">Iniciar Turno</button>
+                <button class="btn-menu" id="btn-opcoes">Configurações (IA & Acessibilidade)</button>
+                <button class="btn-menu" id="btn-creditos">Créditos</button>
+            </div>
+        </div>
+
+        <!-- MODAL DE OPÇÕES -->
+        <div id="modal-opcoes" class="overlay hidden">
+            <div class="modal-box">
+                <h2>Configurações do Sistema</h2>
+
+                <div class="input-group">
+                    <label>Duração do Plantão:</label>
+                    <select id="input-duracao"
+                        style="padding: 8px; font-size: 0.9rem; background: #ecf0f1; border: 1px solid #7f8c8d; width: 100%;">
+                        <option value="3">Curto (Sorteia 3 Pacientes)</option>
+                        <option value="5">Médio (Sorteia 5 Pacientes)</option>
+                        <option value="10">Completo (Todos os 10 Pacientes)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Tamanho da Fonte (Acessibilidade):</label>
+                    <input type="range" id="input-fontsize" min="0.8" max="1.5" step="0.1" value="1">
+                </div>
+
+                <div class="input-group">
+                    <label>ElevenLabs API Key (Vozes IA):</label>
+                    <input type="password" id="input-apikey" placeholder="Cole a sua chave aqui (opcional)">
+                </div>
+
+                <button class="btn-menu" id="btn-fechar-opcoes">Guardar e Voltar</button>
+            </div>
+        </div>
+
+        <!-- TELA PRINCIPAL (Secretária) -->
+        <div id="tela-jogo" class="screen hidden">
+            <div class="hud">
+                <div class="hud-stats">
+                    <button class="btn-hud" id="btn-sair" title="Voltar ao Menu">ABANDONAR</button>
+                    <span class="badge badge-xp" id="hud-nivel">Nvl 1</span>
+                    <span style="color: #eab308; font-weight: bold;" id="hud-xp">0 XP</span>
+                </div>
+                <div class="badge badge-error" id="hud-erros">Auditorias: 0/3</div>
+            </div>
+
+            <!-- Painel Esquerdo: Prancheta / Prontuário -->
+            <div class="panel-left desk-texture">
+                <div class="prancheta">
+                    <div class="clip"></div>
+                    <div class="prontuario-header">
+                        <img id="pac-foto" src="" alt="Foto IA do Paciente" class="foto-paciente">
+                        <div class="dados-basicos">
+                            <h3>REGISTO DE ADMISSÃO</h3>
+                            <p><strong>Paciente:</strong> <span id="pac-nome">Carregando...</span></p>
+                            <p><strong>Data:</strong> 23/09/2026</p>
+                        </div>
+                    </div>
+                    <div class="prontuario-body">
+                        <p><strong>Queixa Principal:</strong></p>
+                        <div class="balao-fala" id="pac-fala">"..."</div>
+                    </div>
+                </div>
+
+                <div class="monitor-container">
+                    <div class="monitor-overlay">ESTABILIDADE: <span id="monitor-txt">100</span>%</div>
+                    <canvas id="ecg-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Painel Direito: Ações e Carimbos -->
+            <div class="panel-right desk-texture">
+                <div class="acoes-titulo">Aferição Manual</div>
+                <div class="papel-acoes">
+                    <div class="grid-afericao">
+                        <button class="btn-aferir" data-sinal="pa">Tensão Art. <span id="val-pa">?</span></button>
+                        <button class="btn-aferir" data-sinal="fc">Freq. Card. <span id="val-fc">?</span></button>
+                        <button class="btn-aferir" data-sinal="fr">Freq. Resp. <span id="val-fr">?</span></button>
+                        <button class="btn-aferir" data-sinal="sat">Sat. O2 <span id="val-sat">?</span></button>
+                    </div>
+                </div>
+
+                <div class="acoes-titulo">Decisão Oficial (Carimbar)</div>
+                <div class="grid-decisao">
+                    <button class="btn-carimbo carimbo-vermelho" data-cor="Vermelho">▲ EMERGÊNCIA</button>
+                    <button class="btn-carimbo carimbo-laranja" data-cor="Laranja">◆ M. URGENTE</button>
+                    <button class="btn-carimbo carimbo-amarelo" data-cor="Amarelo">■ URGENTE</button>
+                    <button class="btn-carimbo carimbo-verde" data-cor="Verde">● P. URGENTE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERLAYS -->
+        <div id="tela-overlay" class="overlay hidden">
+            <h1 id="fb-icon" style="font-size: 5rem;">✅</h1>
+            <div class="papel-feedback">
+                <h2 id="fb-titulo">Feedback Oficial</h2>
+                <p id="fb-texto"></p>
+                <div id="fb-xp"></div>
+            </div>
+            <button class="btn-menu" id="btn-continuar">Próximo Ficheiro</button>
+        </div>
+
+        <!-- TELA DE FIM DE JOGO -->
+        <div id="tela-fim" class="overlay hidden">
+            <div class="papel-feedback" style="border-width: 4px;">
+                <h1 id="fim-icon" style="font-size: 5rem; margin-bottom: 10px;">📋</h1>
+                <h2 id="fim-titulo">Resumo do Turno</h2>
+                <p id="fim-texto">Você finalizou o plantão.</p>
+                <div id="fim-xp"
+                    style="font-size: 2rem; color: var(--amarelo); font-weight: bold; margin: 20px 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
+                </div>
+                <button class="btn-menu" id="btn-voltar-menu" style="width: 100%;">VOLTAR AO MENU</button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
