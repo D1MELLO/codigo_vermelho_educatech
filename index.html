@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Código Vermelho</title>
+    <title>Código Vermelho: Departamento de Triagem</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -74,7 +74,7 @@
                     <span class="badge badge-xp" id="hud-nivel">Nvl 1</span>
                     <span style="color: #eab308; font-weight: bold;" id="hud-xp">0 XP</span>
                 </div>
-                <div class="badge badge-error" id="hud-erros">Auditorias: 0/3</div>
+                <div class="badge badge-error" id="hud-erros">Erros: 0/3</div>
             </div>
 
             <!-- Painel Esquerdo: Prancheta / Prontuário -->
@@ -89,9 +89,16 @@
                             <p><strong>Data:</strong> 23/09/2026</p>
                         </div>
                     </div>
+
                     <div class="prontuario-body">
-                        <p><strong>Queixa Principal:</strong></p>
+                        <p><strong>Relato do Paciente:</strong></p>
                         <div class="balao-fala" id="pac-fala">"..."</div>
+
+                        <!-- NOVA SEÇÃO DE ANOTAÇÕES -->
+                        <div class="anotacoes-clinicas">
+                            <p><strong>📝 Anotações da Enfermagem:</strong></p>
+                            <p id="pac-anotacoes" style="margin-top: 5px;">...</p>
+                        </div>
                     </div>
                 </div>
 

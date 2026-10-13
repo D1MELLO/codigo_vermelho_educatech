@@ -75,9 +75,8 @@ export class GameView {
         document.getElementById('fim-icon').innerText = icon || "📋";
     }
 
-    // AQUI: Volta a receber e a desenhar o maxErros de forma correta
     renderizarHUD(erros, maxErros, xp, nivel) {
-        document.getElementById('hud-erros').innerText = `Auditorias: ${erros}/${maxErros}`;
+        document.getElementById('hud-erros').innerText = `Erros: ${erros}/${maxErros}`;
         document.getElementById('hud-xp').innerText = `${xp} XP`;
         document.getElementById('hud-nivel').innerText = nivel;
     }
@@ -86,7 +85,13 @@ export class GameView {
         document.getElementById('pac-foto').src = caso.foto;
         document.getElementById('pac-nome').innerText = caso.perfil;
         document.getElementById('pac-fala').innerText = `"${caso.fala}"`;
+
+        // AQUI: Insere as anotações visuais sem as ler em voz alta
+        document.getElementById('pac-anotacoes').innerText = caso.anotacoes;
+
         document.querySelectorAll('.btn-aferir').forEach(b => { b.classList.remove('revelado'); b.querySelector('span').innerText = '?'; });
+
+        // TTS narra estritamente a citação do paciente
         this.falarPaciente(caso.fala, caso.grave);
     }
 
