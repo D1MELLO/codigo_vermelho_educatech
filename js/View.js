@@ -4,12 +4,12 @@ export class GameView {
         this.telaJogo = document.getElementById('tela-jogo');
         this.telaOverlay = document.getElementById('tela-overlay');
         this.telaFim = document.getElementById('tela-fim');
+        this.telaCreditos = document.getElementById('tela-creditos');
         this.modalOpcoes = document.getElementById('modal-opcoes');
         this.canvas = document.getElementById('ecg-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.ecgPos = 0;
         this.audioCtx = null;
-        this.audioVoz = null;
         this.synth = window.speechSynthesis;
     }
 
@@ -18,16 +18,21 @@ export class GameView {
         document.getElementById('btn-opcoes').addEventListener('click', () => this.modalOpcoes.classList.remove('hidden'));
 
         document.getElementById('btn-fechar-opcoes').addEventListener('click', () => {
-            const key = document.getElementById('input-apikey').value;
-            const duracao = document.getElementById('input-duracao').value; // Capta a nova duração
-            handlerOpcoes(key, duracao);
+            const duracao = document.getElementById('input-duracao').value;
+            handlerOpcoes(duracao);
             this.modalOpcoes.classList.add('hidden');
         });
 
         document.getElementById('input-fontsize').addEventListener('input', (e) => {
             document.documentElement.style.setProperty('--font-scale', e.target.value);
         });
-        document.getElementById('btn-creditos').addEventListener('click', () => alert("Desenvolvido para Ensino Técnico."));
+
+        if (document.getElementById('btn-creditos')) {
+            document.getElementById('btn-creditos').addEventListener('click', () => this.mostrarTela('creditos'));
+        }
+        if (document.getElementById('btn-voltar-creditos')) {
+            document.getElementById('btn-voltar-creditos').addEventListener('click', () => this.mostrarTela('menu'));
+        }
     }
 
     bindAcoes(handlerAferir, handlerClassificar, handlerProximo) {
@@ -50,16 +55,17 @@ export class GameView {
         this.telaJogo.classList.add('hidden');
         this.telaOverlay.classList.add('hidden');
         this.telaFim.classList.add('hidden');
+        if (this.telaCreditos) this.telaCreditos.classList.add('hidden');
 
         if (nome === 'jogo') { this.telaJogo.classList.remove('hidden'); this.resizeCanvas(); }
         else if (nome === 'overlay') { this.telaOverlay.classList.remove('hidden'); }
         else if (nome === 'fim') { this.telaFim.classList.remove('hidden'); }
         else if (nome === 'menu') { this.telaMenu.classList.remove('hidden'); }
+        else if (nome === 'creditos') { this.telaCreditos.classList.remove('hidden'); }
     }
 
     mostrarFimDeJogo(titulo, mensagem, xpFinal, icon, color) {
         this.synth.cancel();
-        if (this.audioVoz) this.audioVoz.pause();
         this.mostrarTela('fim');
         const tit = document.getElementById('fim-titulo');
         tit.innerText = titulo;
@@ -69,19 +75,19 @@ export class GameView {
         document.getElementById('fim-icon').innerText = icon || "📋";
     }
 
-    // AQUI: Força a atualização dos erros, XP e nível na tela
-    renderizarHUD(erros, xp, nivel) {
-        document.getElementById('hud-erros').innerText = `Auditorias: ${erros}/3`;
+    // AQUI: Volta a receber e a desenhar o maxErros de forma correta
+    renderizarHUD(erros, maxErros, xp, nivel) {
+        document.getElementById('hud-erros').innerText = `Auditorias: ${erros}/${maxErros}`;
         document.getElementById('hud-xp').innerText = `${xp} XP`;
         document.getElementById('hud-nivel').innerText = nivel;
     }
 
-    renderizarPaciente(caso, apiKey) {
+    renderizarPaciente(caso) {
         document.getElementById('pac-foto').src = caso.foto;
         document.getElementById('pac-nome').innerText = caso.perfil;
         document.getElementById('pac-fala').innerText = `"${caso.fala}"`;
         document.querySelectorAll('.btn-aferir').forEach(b => { b.classList.remove('revelado'); b.querySelector('span').innerText = '?'; });
-        this.falarPacienteIA(caso.fala, caso.vozId, apiKey);
+        this.falarPaciente(caso.fala, caso.grave);
     }
 
     revelarSinal(btn, valor) {
@@ -89,7 +95,7 @@ export class GameView {
     }
 
     mostrarFeedback(resultado, gameOver) {
-        this.synth.cancel(); if (this.audioVoz) this.audioVoz.pause();
+        this.synth.cancel();
         this.mostrarTela('overlay');
         document.getElementById('fb-texto').innerText = resultado.mensagem;
         const titulo = document.getElementById('fb-titulo');
@@ -111,21 +117,13 @@ export class GameView {
         }
     }
 
-    async falarPacienteIA(texto, vozId, apiKey) {
-        this.synth.cancel(); if (this.audioVoz) this.audioVoz.pause();
-        if (apiKey && apiKey.trim() !== "") {
-            try {
-                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${vozId}`, {
-                    method: 'POST', headers: { 'xi-api-key': apiKey, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: texto, model_id: "eleven_multilingual_v2" })
-                });
-                if (response.ok) {
-                    const blob = await response.blob(); this.audioVoz = new Audio(URL.createObjectURL(blob));
-                    this.audioVoz.play(); return;
-                }
-            } catch (e) { console.warn("API falhou, usando offline."); }
-        }
-        let ut = new SpeechSynthesisUtterance(texto); ut.lang = 'pt-PT'; ut.rate = 0.9; this.synth.speak(ut);
+    falarPaciente(texto, grave) {
+        this.synth.cancel();
+        let ut = new SpeechSynthesisUtterance(texto);
+        ut.lang = 'pt-PT';
+        ut.rate = grave ? 0.85 : 0.95;
+        ut.pitch = grave ? 0.8 : 1.0;
+        this.synth.speak(ut);
     }
 
     _initAudio() { if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (this.audioCtx.state === 'suspended') this.audioCtx.resume(); }

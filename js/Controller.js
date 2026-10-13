@@ -7,9 +7,8 @@ export class GameController {
 
         this.view.bindMenus(
             this.iniciarPlantao.bind(this),
-            (apiKey, duracao) => {
-                this.model.setApiKey(apiKey);
-                this.model.setTamanhoPlantao(duracao); // Atualiza o tamanho do jogo
+            (duracao) => {
+                this.model.setTamanhoPlantao(duracao);
             }
         );
         this.view.bindAcoes(
@@ -36,9 +35,10 @@ export class GameController {
         const caso = this.model.getCasoAtual();
         this.model.estabilidade = 100;
 
-        this.view.renderizarPaciente(caso, this.model.apiKey);
-        // Atualiza erros e níveis no ecrã logo ao carregar o paciente
-        this.view.renderizarHUD(this.model.erros, this.model.xp, this.model.getNivelAtual());
+        this.view.renderizarPaciente(caso);
+
+        // Passa os 4 parâmetros: Erros, MaxErros, XP e Nível
+        this.view.renderizarHUD(this.model.erros, this.model.maxErros, this.model.xp, this.model.getNivelAtual());
 
         clearInterval(this.timerQueda);
         let queda = 100 / caso.tempoBase;
@@ -67,8 +67,8 @@ export class GameController {
 
         if (gameOver) this.model.estabilidade = 0;
 
-        // Atualiza a tela imediatamente após o erro ser registado
-        this.view.renderizarHUD(this.model.erros, this.model.xp, this.model.getNivelAtual());
+        // Passa os 4 parâmetros: Erros, MaxErros, XP e Nível
+        this.view.renderizarHUD(this.model.erros, this.model.maxErros, this.model.xp, this.model.getNivelAtual());
 
         if (gameOver) {
             this.encerrarRotina("AUDITORIA MÉDICA", "Atingiu o limite de erros críticos. O departamento será fechado para investigação.", "var(--vermelho)", "🚨");
